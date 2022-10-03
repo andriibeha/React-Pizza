@@ -1,8 +1,11 @@
 import s from "./Search.module.scss";
 
-const Search = () => {
+const Search = ({searchValue, setSearchValue}) => {
     return (
-        <input className={s.root} placeholder="Поиск пиццы" />
+        <input
+            value={searchValue}
+        onChange={(e) => {setSearchValue(e.target.value)}}
+        className={s.root} placeholder="Поиск пиццы" />
     )
 };
 
