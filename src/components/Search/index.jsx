@@ -1,4 +1,4 @@
-import { useContext, useState, useMemo } from "react";
+import { useContext, useState } from "react";
 import { SearchContext } from "components/App";
 import debounce from "lodash.debounce";
 
@@ -8,17 +8,10 @@ const Search = () => {
     const [value, setValue] = useState('');
     const { setSearchValue } = useContext(SearchContext);
 
-    const updateSearchValue = useMemo(
-        () =>
-            debounce((str) => {
-            setSearchValue(str);
-            }, 500),
-        [setSearchValue]
-    )
-
     const onChangeInput = (e) => {
         setValue(e.target.value);
-        updateSearchValue(e.target.value);
+        const debounced = debounce(() => setSearchValue(e.target.value), 500);
+        debounced();
     };
 
     return (
