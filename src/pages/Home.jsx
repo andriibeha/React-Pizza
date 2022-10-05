@@ -38,7 +38,7 @@ const Home = () => {
             const sort = sortList.find(obj => obj.sortProperty === params.sortProperty);
             dispatch(setFilters({ ...params, sort }));
         }
-    }, []);
+    }, [dispatch]);
 
     useEffect(() => {
         setIsLoading(true);
@@ -64,7 +64,7 @@ const Home = () => {
         });
 
         navigate(`?${queryString}`);
-    }, [currentPage, categoryId, sort.sortProperty]);
+    }, [currentPage, categoryId, sort.sortProperty, navigate]);
 
     const pizzas = items.map((obj) => <PizzaBlock key={obj.id} {...obj} />);
     const skeletons = [...new Array(6)].map((_, index) => <Skeleton key={index} />);
