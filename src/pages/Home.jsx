@@ -12,11 +12,14 @@ import Skeleton from "../components/PizzaBlock/Skeleton";
 import Pagination from "components/Pagination";
 
 import { setCategoryId, setCurrentPage, setFilters } from "redux/slices/filterSlice";
+import { useRef } from "react";
 
 
 const Home = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const isSearch = useRef(false);
+    const isMounted = useRef(false);
     const { categoryId, sort, currentPage } = useSelector(state => state.filter);
 
     const { searchValue } = useContext(SearchContext);
@@ -37,34 +40,46 @@ const Home = () => {
             const params = qs.parse(window.location.search.substring(1));
             const sort = sortList.find(obj => obj.sortProperty === params.sortProperty);
             dispatch(setFilters({ ...params, sort }));
-        }
+        };
+
+        isSearch.current = true;
     }, [dispatch]);
 
+
     useEffect(() => {
-        setIsLoading(true);
-
-        const category = categoryId > 0 ? `category=${categoryId}` : "";
-        const sortBy = sort.sortProperty;
-        const search = searchValue ? `search=${searchValue}` : "";
-        
-        axios.get(`https://6304b2f794b8c58fd7231db1.mockapi.io/api/items?page=${currentPage}&limit=6&${category}&${search}&sortBy=${sortBy}&order=desc`)
-            .then((res) => {
-                setItems(res.data);
-                setIsLoading(false);
-            });
-
         window.scrollTo(0, 0);
+
+        if (isSearch.current) {
+            setIsLoading(true);
+
+            const category = categoryId > 0 ? `category=${categoryId}` : "";
+            const sortBy = sort.sortProperty;
+            const search = searchValue ? `search=${searchValue}` : "";
+        
+            axios.get(`https://6304b2f794b8c58fd7231db1.mockapi.io/api/items?page=${currentPage}&limit=6&${category}&${search}&sortBy=${sortBy}&order=desc`)
+                .then((res) => {
+                    setItems(res.data);
+                    setIsLoading(false);
+                });
+        };
+
+        isSearch.current = true;
     }, [categoryId, sort.sortProperty, searchValue, currentPage]);
 
     useEffect(() => {
-        const queryString = qs.stringify({
+        if (isMounted.current) { 
+            const queryString = qs.stringify({
             sortProperty: sort.sortProperty,
             categoryId,
             currentPage,
         });
 
         navigate(`?${queryString}`);
+        };
+
+        isMounted.current = true;
     }, [currentPage, categoryId, sort.sortProperty, navigate]);
+
 
     const pizzas = items.map((obj) => <PizzaBlock key={obj.id} {...obj} />);
     const skeletons = [...new Array(6)].map((_, index) => <Skeleton key={index} />);
