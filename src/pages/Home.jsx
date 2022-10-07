@@ -13,6 +13,7 @@ import Pagination from "components/Pagination";
 
 import { setCategoryId, setCurrentPage, setFilters } from "redux/slices/filterSlice";
 import { useRef } from "react";
+import { setItems } from "redux/slices/pizzasSlice";
 
 
 const Home = () => {
@@ -21,9 +22,10 @@ const Home = () => {
     const isSearch = useRef(false);
     const isMounted = useRef(false);
     const { categoryId, sort, currentPage } = useSelector(state => state.filter);
+    const items = useSelector(state => state.pizzas.items);
 
     const { searchValue } = useContext(SearchContext);
-    const [items, setItems] = useState([]);
+
     const [isLoading, setIsLoading] = useState(true);
     
 
@@ -45,26 +47,33 @@ const Home = () => {
         isSearch.current = true;
     }, [dispatch]);
 
-
     useEffect(() => {
-        window.scrollTo(0, 0);
-
-        if (isSearch.current) {
+        const fetchPizzas = async () => {
             setIsLoading(true);
 
             const category = categoryId > 0 ? `category=${categoryId}` : "";
             const sortBy = sort.sortProperty;
             const search = searchValue ? `search=${searchValue}` : "";
-        
-            axios.get(`https://6304b2f794b8c58fd7231db1.mockapi.io/api/items?page=${currentPage}&limit=6&${category}&${search}&sortBy=${sortBy}&order=desc`)
-                .then((res) => {
-                    setItems(res.data);
-                    setIsLoading(false);
-                });
+            
+
+            try {
+                const {data} = await axios.get(`https://6304b2f794b8c58fd7231db1.mockapi.io/api/items?page=${currentPage}&limit=6&${category}&${search}&sortBy=${sortBy}&order=desc`);
+
+                dispatch(setItems(data))
+            } catch (error) {
+                console.log(error.message)
+            } finally { 
+                setIsLoading(false);
+            };
+        };
+
+        if (isSearch.current) {
+            fetchPizzas()
         };
 
         isSearch.current = true;
-    }, [categoryId, sort.sortProperty, searchValue, currentPage]);
+        window.scrollTo(0, 0);
+    }, [categoryId, sort.sortProperty, searchValue, currentPage, dispatch]);
 
     useEffect(() => {
         if (isMounted.current) { 
@@ -78,7 +87,7 @@ const Home = () => {
         };
 
         isMounted.current = true;
-    }, [currentPage, categoryId, sort.sortProperty, navigate]);
+    }, [currentPage, categoryId, sort.sortProperty, navigate ]);
 
 
     const pizzas = items.map((obj) => <PizzaBlock key={obj.id} {...obj} />);
