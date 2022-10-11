@@ -6,16 +6,14 @@ import Home from "pages/Home";
 import Cart from "pages/Cart";
 
 import "../scss/app.scss";
-import { useState } from "react";
 
-export const SearchContext = React.createContext();
+
 
 export const App = () => {
-  const [searchValue, setSearchValue] = useState('');
+   
 
   return (
     <div className="wrapper">
-      <SearchContext.Provider value={{searchValue, setSearchValue}}>
         <Header />
         <div className="content">
           <Routes>
@@ -24,7 +22,6 @@ export const App = () => {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
-      </SearchContext.Provider>
     </div>
   );
 };
