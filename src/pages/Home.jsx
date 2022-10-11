@@ -1,5 +1,5 @@
 import qs from "qs";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -73,7 +73,7 @@ const Home = () => {
     }, [currentPage, categoryId, sort.sortProperty, navigate]);
 
 
-    const pizzas = items.map((obj) => <PizzaBlock key={obj.id} {...obj} />);
+    const pizzas = items.map((obj) => <Link to={`/pizza/${obj.id}`} key={obj.id}><PizzaBlock key={obj.id} {...obj} /></Link>);
     const skeletons = [...new Array(6)].map((_, index) => <Skeleton key={index} />);
     
     return (
