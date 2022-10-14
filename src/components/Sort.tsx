@@ -1,40 +1,45 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { selectSort, setSort } from "redux/slices/filterSlice";
+import { selectSort, setSort } from "../redux/slices/filterSlice";
+import { SortPropertyEnum } from "../redux/slices/filterSlice";
 
-export const sortList = [
-  { name: "популярности", sortProperty: "rating" },
-  { name: "цене", sortProperty: "price" },
-  { name: "алфавиту", sortProperty: "title" }
+type SortItem = {
+  name: string;
+  sortProperty: SortPropertyEnum;
+};
+
+export const sortList: SortItem[] = [
+  { name: "популярности", sortProperty: SortPropertyEnum.RATING },
+  { name: "цене", sortProperty: SortPropertyEnum.PRICE },
+  { name: "алфавиту", sortProperty: SortPropertyEnum.TITLE }
 ];
 
-const Sort = () => {
+const SortPopUp = () => {
   const dispatch = useDispatch();
   const sort = useSelector(selectSort);
-  const sortRef = useRef();
+  const sortRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
 
-
-
-  const onClickListItem = (obj) => {
+  const onClickListItem = (obj: SortItem) => {
     dispatch(setSort(obj));
     setOpen(!open);
   };
 
   useEffect(() => {
-    const onClickOutside = (e) => {
-      if (!e.path.includes(sortRef.current)) {
-        setOpen(false);
+    const onClickOutside = (e: MouseEvent) => {
+      const _e = e as MouseEvent & {
+        path: Node[];
       }
+      if (sortRef.current && !_e.path.includes(sortRef.current)) {
+        setOpen(false);
+      };
     };
 
     document.body.addEventListener('click', onClickOutside);
 
     return () => document.body.removeEventListener('click', onClickOutside);
   }, []);
-
-
 
   return (
     <div ref={sortRef} className="sort">
@@ -71,4 +76,4 @@ const Sort = () => {
   )
 };
 
-export default Sort;
+export default SortPopUp;

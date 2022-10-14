@@ -4,9 +4,13 @@ import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 
-const FullPizza = () => {
+const FullPizza: React.FC = () => {
     const { id } = useParams();
-    const [pizza, setPizza] = useState();
+    const [pizza, setPizza] = useState<{
+        imageUrl: string;
+        title: string;
+        price: number;
+    }>();
     const navigate = useNavigate();
     
     useEffect(() => {
@@ -24,7 +28,7 @@ const FullPizza = () => {
     }, [id, navigate]);
 
     if (!pizza) { 
-        return "Loading"
+        return <>Loading</>
     };
 
     return (

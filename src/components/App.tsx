@@ -1,17 +1,15 @@
 import { Routes, Route } from "react-router-dom";
-import NotFound from "pages/NotFound";
-import Home from "pages/Home";
-import Cart from "pages/Cart";
-import FullPizza from 'pages/FullPizza';
+import NotFound from "../pages/NotFound";
+import Home from "../pages/Home";
+import Cart from "../pages/Cart";
+import FullPizza from '../pages/FullPizza';
+import MainLayout from "../layouts/MainLayout";
 
 
 import "../scss/app.scss";
-import MainLayout from "layouts/MainLayout";
 
 
 export const App = () => {
-   
-
   return (
     <Routes>
       <Route path='/' element={<MainLayout />}>

@@ -1,15 +1,15 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import debounce from "lodash.debounce";
+import { useDispatch } from "react-redux";
+import { setSearchValue } from "../../redux/slices/filterSlice";
 
 import s from "./Search.module.scss";  
-import { useDispatch } from "react-redux";
-import { setSearchValue } from "redux/slices/filterSlice";
 
-const Search = () => {
+const Search : React.FC= () => {
     const [value, setValue] = useState('');
     const dispatch = useDispatch();
 
-    const onChangeInput = (e) => {
+    const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         setValue(e.target.value);
         const debounced = debounce(() => dispatch(setSearchValue(e.target.value)), 500);
         debounced();
@@ -18,7 +18,7 @@ const Search = () => {
     return (
         <input
             value={value}
-            onChange={(e) => {onChangeInput(e)}}
+            onChange={(e) => { onChangeInput(e) }}
             className={s.root} placeholder="Поиск пиццы" />
     )
 };
