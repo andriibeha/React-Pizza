@@ -1,7 +1,7 @@
 import qs from "qs";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import {  useSelector } from "react-redux";
+import { useEffect, useCallback } from "react";
+import { useSelector } from "react-redux";
 
 import Categories from "../components/Categories";
 import Sort, { sortList } from "../components/Sort";
@@ -25,17 +25,17 @@ const Home: React.FC = () => {
     const { items, status } = useSelector(selectPizzaData);
 
 
-    const onChangeCategory = (id: number) => {
+    const onChangeCategory = useCallback((id: number) => {
         dispatch(setCategoryId(id))
-    };
+    }, [dispatch]);
 
     const onChangePage = (page: number) => {
         dispatch(setCurrentPage(page));
-    }; 
+    };
 
     useEffect(() => {
         if (window.location.search) {
-            const params = (qs.parse(window.location.search.substring(1))as unknown)as SearchPizzaParams;
+            const params = (qs.parse(window.location.search.substring(1)) as unknown) as SearchPizzaParams;
             const sort = sortList.find(obj => obj.sortProperty === params.sortBy);
             dispatch(setFilters({
                 searchValue: params.search,
@@ -53,7 +53,7 @@ const Home: React.FC = () => {
             const category = categoryId > 0 ? `category=${categoryId}` : "";
             const sortBy = sort.sortProperty;
             const search = searchValue ? `search=${searchValue}` : "";
-            
+
             dispatch(fetchPizzas({
                 sortBy,
                 category,
@@ -82,13 +82,13 @@ const Home: React.FC = () => {
 
     const pizzas = items.map((obj: any) => <PizzaBlock key={obj.id} {...obj} />);
     const skeletons = [...new Array(6)].map((_, index) => <Skeleton key={index} />);
-    
+
     return (
         <div className="container">
             <div className="content__top">
                 <Categories value={categoryId}
                     onChangeCategory={onChangeCategory} />
-                <Sort />
+                <Sort value={sort} />
             </div>
             <h2 className="content__title">Все пиццы</h2>
             {status === 'error' ?
@@ -101,10 +101,10 @@ const Home: React.FC = () => {
                     {status === 'loading' ? skeletons : pizzas}
                 </div>
             }
-            
+
             <Pagination currentPage={currentPage} onChangePage={onChangePage} />
         </div>
     )
-}; 
+};
 
-export default  Home;
+export default Home;

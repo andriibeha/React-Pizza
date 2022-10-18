@@ -232,6 +232,23 @@ body {
             display: none;
           }
         }
+
+        &:disabled { 
+          opacity: 0.4;
+          border-color: grey;
+
+          &:hover {
+            background-color: transparent;
+          }
+
+          &:active { 
+            transform: none;
+          }
+
+          svg path { 
+            fill: grey;
+          }
+        }
       }
 
       b {
